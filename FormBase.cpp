@@ -4,7 +4,7 @@
 
 DWORD CModalWindowBase::GetHotkeyFromHotkeyEdit(HWND hwnd)
 {
-    return (DWORD)SendMessage(hwnd, HKM_GETHOTKEY, 0, 0);
+    return static_cast<DWORD>(SendMessage(hwnd, HKM_GETHOTKEY, 0, 0));
 }
 
 std::string CModalWindowBase::GetTextFromEditA(HWND hwnd)
@@ -12,7 +12,7 @@ std::string CModalWindowBase::GetTextFromEditA(HWND hwnd)
     char s[1025];
 
     // The return value is the number of characters copied, not including the terminating null character.
-    DWORD length = (DWORD)SendMessageA(hwnd, WM_GETTEXT, 1024, (LPARAM)s);
+    DWORD length = static_cast<DWORD>(SendMessageA(hwnd, WM_GETTEXT, 1024, (LPARAM)s));
     s[length] = 0;
 
     return std::string(s);
@@ -23,7 +23,7 @@ std::wstring CModalWindowBase::GetTextFromEditW(HWND hwnd)
     wchar_t s[1025];
 
     // The return value is the number of characters copied, not including the terminating null character.
-    DWORD length = (DWORD)SendMessageW(hwnd, WM_GETTEXT, 1024, (LPARAM)s);
+    DWORD length = static_cast<DWORD>(SendMessageW(hwnd, WM_GETTEXT, 1024, (LPARAM)s));
     s[length] = 0;
 
     return std::wstring(s);

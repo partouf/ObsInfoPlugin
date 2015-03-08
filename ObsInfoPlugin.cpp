@@ -5,27 +5,7 @@
 #include "SettingsManager.h"
 #include <string>
 #include "OBSApi.h"
-
-
-std::string Wide2Default(std::wstring in)
-{
-    std::string outstr = "";
-
-    char defaultchar[2] = { (char)32, 0 };
-    BOOL b = NULL;
-
-    long outmaxlen = in.length() * 4;
-    char *out;
-
-    out = static_cast<char *>(malloc(outmaxlen));
-    long outlen = WideCharToMultiByte(CP_ACP, WC_NO_BEST_FIT_CHARS, in.c_str(), in.length(), out, outmaxlen, &defaultchar[0], &b);
-    out[outlen] = 0;
-
-    outstr.append(out);
-    free(out);
-
-    return out;
-}
+#include "Encoding.h"
 
 void DumpStringToFile(std::wstring things) {
     std::wstring fullpath = Settings()->AppDataPath + L"\\" + Settings()->FileName;
@@ -40,7 +20,7 @@ void DumpStringToFile(std::wstring things) {
     if (fp != NULL)
     {
         // convert things to default windows codepage
-        std::string def = Wide2Default(things);
+        std::string def = CEncoding::Wide2Default(things);
         fprintf(fp, "%s\r\n", def.c_str());
 
         fclose(fp);
@@ -70,8 +50,6 @@ std::wstring MilliToHMSString(UINT time)
 void __stdcall HotKeyProc(DWORD a, UPARAM b, bool bDown) {
     if (bDown)
     {
-        // F12 down key hit
-
         // get total stream time till now and dump that into a file
 
         UINT time = OBSGetTotalStreamTime();
@@ -83,12 +61,13 @@ void __stdcall HotKeyProc(DWORD a, UPARAM b, bool bDown) {
 bool LoadPlugin() {
     // intialization stuff when plugin "really" gets loaded - register hotkey in OBS and get the appdata path
 
-    Settings()->RegisteredHotKey = OBSCreateHotkey(VK_F12, &HotKeyProc, 0);
     Settings()->AppDataPath = OBSGetAppDataPath();
     Settings()->IniFile = OBSGetPluginDataPath() + L"\\" + L"ObsInfo.ini";
 
     // load from ini file if available
     Settings()->Load();
+
+    Settings()->RegisteredHotKey = OBSCreateHotkey(Settings()->HotVKey, &HotKeyProc, 0);
 
     return true;
 }
@@ -123,5 +102,8 @@ void ConfigPlugin(HWND hHandle) {
     if (frmSettings.AskAndSetSettings())
     {
         Settings()->Save();
+
+        UnloadPlugin();
+        LoadPlugin();
     }
 }
