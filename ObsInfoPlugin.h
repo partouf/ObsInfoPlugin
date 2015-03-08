@@ -14,3 +14,4 @@ OBSINFOPLUGIN_API void OnStartStream();
 OBSINFOPLUGIN_API void OnStopStream();
 OBSINFOPLUGIN_API CTSTR GetPluginName();
 OBSINFOPLUGIN_API CTSTR GetPluginDescription();
+OBSINFOPLUGIN_API void ConfigPlugin(HWND hHandle);

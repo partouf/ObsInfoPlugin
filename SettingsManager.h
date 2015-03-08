@@ -3,18 +3,35 @@
 #include <Windows.h>
 #include <string>
 
+#include "FormBase.h"
+
 class CSettingsManager
 {
 public:
     HINSTANCE Parent;
     UINT RegisteredHotKey;
+    UINT HotVKey;
+
     std::wstring AppDataPath;
+    std::wstring IniFile;
     std::wstring FileName;
-    std::string Format;
+    std::wstring Format;
 
     CSettingsManager();
     virtual ~CSettingsManager();
+
+    void Save();
+    void Load();
 };
+
+class CSettingsForm : public CModalWindowBase
+{
+public:
+    CSettingsForm(HWND hParent, HINSTANCE hAppInstance) : CModalWindowBase(hParent, hAppInstance) {};
+    
+    bool AskAndSetSettings();
+};
+
 
 // get main settings object
 CSettingsManager *Settings();

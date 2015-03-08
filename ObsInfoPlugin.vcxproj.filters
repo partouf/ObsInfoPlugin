@@ -24,6 +24,9 @@
     <ClInclude Include="SettingsManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FormBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ObsInfoPlugin.cpp">
@@ -35,5 +38,13 @@
     <ClCompile Include="SettingsManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FormBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ObsInfoPlugin.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

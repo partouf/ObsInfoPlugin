@@ -3,10 +3,31 @@
 
 #include "ObsInfoPlugin.h"
 #include "SettingsManager.h"
-#include "OBSApi.h"
 #include <string>
+#include "OBSApi.h"
 
-void DumpStringToFile(std::string things) {
+
+std::string Wide2Default(std::wstring in)
+{
+    std::string outstr = "";
+
+    char defaultchar[2] = { (char)32, 0 };
+    BOOL b = NULL;
+
+    long outmaxlen = in.length() * 4;
+    char *out;
+
+    out = static_cast<char *>(malloc(outmaxlen));
+    long outlen = WideCharToMultiByte(CP_ACP, WC_NO_BEST_FIT_CHARS, in.c_str(), in.length(), out, outmaxlen, &defaultchar[0], &b);
+    out[outlen] = 0;
+
+    outstr.append(out);
+    free(out);
+
+    return out;
+}
+
+void DumpStringToFile(std::wstring things) {
     std::wstring fullpath = Settings()->AppDataPath + L"\\" + Settings()->FileName;
 
     // check if file exists and append
@@ -18,7 +39,9 @@ void DumpStringToFile(std::string things) {
 
     if (fp != NULL)
     {
-        fprintf(fp, "%s\r\n", things.c_str());
+        // convert things to default windows codepage
+        std::string def = Wide2Default(things);
+        fprintf(fp, "%s\r\n", def.c_str());
 
         fclose(fp);
     }
@@ -29,9 +52,9 @@ void DumpStringToFile(std::string things) {
 }
 
 // convert milliseconds to hours:minutes:seconds, 0 leading on minutes and seconds, hours can be a lot
-std::string MilliToHMSString(UINT time)
+std::wstring MilliToHMSString(UINT time)
 {
-    char s[1024];
+    wchar_t s[1024];
 
     uint32_t totalseconds = (uint32_t)trunc(time / 1000.0);
 
@@ -39,7 +62,7 @@ std::string MilliToHMSString(UINT time)
     uint32_t min = (uint32_t)trunc(totalseconds / 60.0) - (hr * 60);
     uint32_t sec = totalseconds % 60;
 
-    sprintf(s, Settings()->Format.c_str(), hr, min, sec);
+    wsprintf(s, Settings()->Format.c_str(), hr, min, sec);
 
     return s;
 }
@@ -57,47 +80,48 @@ void __stdcall HotKeyProc(DWORD a, UPARAM b, bool bDown) {
     }
 }
 
-OBSINFOPLUGIN_API bool LoadPlugin() {
+bool LoadPlugin() {
     // intialization stuff when plugin "really" gets loaded - register hotkey in OBS and get the appdata path
 
     Settings()->RegisteredHotKey = OBSCreateHotkey(VK_F12, &HotKeyProc, 0);
     Settings()->AppDataPath = OBSGetAppDataPath();
+    Settings()->IniFile = OBSGetPluginDataPath() + L"\\" + L"ObsInfo.ini";
 
-/*
-    DumpStringToFile(MilliToHMSString(60000));
-    DumpStringToFile(MilliToHMSString(61000));
-    DumpStringToFile(MilliToHMSString(3600000));
-    DumpStringToFile(MilliToHMSString(119000));
-    DumpStringToFile(MilliToHMSString(3600000));
-    DumpStringToFile(MilliToHMSString(3660000));
-    DumpStringToFile(MilliToHMSString(7200000));
-    DumpStringToFile(MilliToHMSString(14400000));
-    DumpStringToFile(MilliToHMSString(14461000));
-*/
+    // load from ini file if available
+    Settings()->Load();
 
     return true;
 }
 
-OBSINFOPLUGIN_API void UnloadPlugin() {
+void UnloadPlugin() {
     UINT k = Settings()->RegisteredHotKey;
     Settings()->RegisteredHotKey = 0;
 
     OBSDeleteHotkey(k);
 }
 
-OBSINFOPLUGIN_API void OnStartStream() {
+void OnStartStream() {
     // might be useful to mark start and stops of older streams
-    DumpStringToFile("StartStream");
+    DumpStringToFile(L"StartStream");
 }
 
-OBSINFOPLUGIN_API void OnStopStream() {
-    DumpStringToFile("StopStream");
+void OnStopStream() {
+    DumpStringToFile(L"StopStream");
 }
 
-OBSINFOPLUGIN_API CTSTR GetPluginName() {
+CTSTR GetPluginName() {
     return L"ObsInfoPlugin";
 }
 
-OBSINFOPLUGIN_API CTSTR GetPluginDescription() {
+CTSTR GetPluginDescription() {
     return L"ObsInfoPlugin does stuff when you press F12";
+}
+
+void ConfigPlugin(HWND hHandle) {
+    CSettingsForm frmSettings(hHandle, Settings()->Parent);
+
+    if (frmSettings.AskAndSetSettings())
+    {
+        Settings()->Save();
+    }
 }
