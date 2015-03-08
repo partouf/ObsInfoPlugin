@@ -119,9 +119,7 @@ bool CSettingsForm::AskAndSetSettings()
     HWND lblFormat = AddLabel(10, 20, 100, 21, L"Format:");
     HWND lblHotkey = AddLabel(10, 45, 100, 21, L"Hotkey:");
 
-    char captionA[1024] = "";
-    sprintf(captionA, "%s", Settings()->Format.c_str());
-    HWND edFormat = AddEditA(115, 20, 100, 21, captionA);
+    HWND edFormat = AddEdit(115, 20, 100, 21, Settings()->Format.c_str());
 
     HWND edHotkey = AddHotKeyEdit(115, 45, 100, 21, Settings()->HotVKey);
 

@@ -17,10 +17,10 @@ public:
     std::wstring CModalWindowBase::GetTextFromEditW(HWND hwnd);
     std::string CModalWindowBase::GetTextFromEditA(HWND hwnd);
 
-    HWND AddLabel(int x, int y, int w, int h, wchar_t *caption);
-    HWND AddEdit(int x, int y, int w, int h, wchar_t *caption);
-    HWND AddEditA(int x, int y, int w, int h, char *caption);
-    HWND AddButton(int x, int y, int w, int h, wchar_t *caption, short data, DWORD extrastyle);
+    HWND AddLabel(int x, int y, int w, int h, const wchar_t *caption);
+    HWND AddEdit(int x, int y, int w, int h, const wchar_t *caption);
+    HWND AddEditA(int x, int y, int w, int h, const char *caption);
+    HWND AddButton(int x, int y, int w, int h, const wchar_t *caption, short data, DWORD extrastyle);
 
     HWND AddHotKeyEdit(int x, int y, int w, int h, DWORD vkey);
     DWORD GetHotkeyFromHotkeyEdit(HWND hwnd);

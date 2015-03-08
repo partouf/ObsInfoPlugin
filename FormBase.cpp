@@ -29,7 +29,7 @@ std::wstring CModalWindowBase::GetTextFromEditW(HWND hwnd)
     return std::wstring(s);
 }
 
-HWND CModalWindowBase::AddLabel(int x, int y, int w, int h, wchar_t *caption)
+HWND CModalWindowBase::AddLabel(int x, int y, int w, int h, const wchar_t *caption)
 {
     HWND lbl =
         CreateWindowExW(
@@ -48,7 +48,7 @@ HWND CModalWindowBase::AddLabel(int x, int y, int w, int h, wchar_t *caption)
     return lbl;
 }
 
-HWND CModalWindowBase::AddEdit(int x, int y, int w, int h, wchar_t *caption)
+HWND CModalWindowBase::AddEdit(int x, int y, int w, int h, const wchar_t *caption)
 {
     HWND edt =
         CreateWindowExW(
@@ -67,7 +67,7 @@ HWND CModalWindowBase::AddEdit(int x, int y, int w, int h, wchar_t *caption)
     return edt;
 }
 
-HWND CModalWindowBase::AddEditA(int x, int y, int w, int h, char *caption)
+HWND CModalWindowBase::AddEditA(int x, int y, int w, int h, const char *caption)
 {
     HWND edt =
         CreateWindowExA(
@@ -111,7 +111,7 @@ HWND CModalWindowBase::AddHotKeyEdit(int x, int y, int w, int h, DWORD vkey)
 }
 
 
-HWND CModalWindowBase::AddButton(int x, int y, int w, int h, wchar_t *caption, short data, DWORD extrastyle)
+HWND CModalWindowBase::AddButton(int x, int y, int w, int h, const wchar_t *caption, short data, DWORD extrastyle)
 {
     HWND btn =
         CreateWindowExW(
