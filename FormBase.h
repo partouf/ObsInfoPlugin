@@ -2,10 +2,13 @@
 
 #include <Windows.h>
 #include <string>
+#include <vector>
 
 class CModalWindowBase
 {
 protected:
+    std::vector<HWND> Handles;
+    WNDCLASSEXW wndclass;
     HINSTANCE AppInstance = NULL;
     HWND HandleParent = NULL;
     WORD ModalResult = 0;
@@ -14,8 +17,11 @@ public:
     CModalWindowBase(HWND hParent, HINSTANCE hAppInstance);
     virtual ~CModalWindowBase();
 
-    std::wstring CModalWindowBase::GetTextFromEditW(HWND hwnd);
-    std::string CModalWindowBase::GetTextFromEditA(HWND hwnd);
+    void InitDefaultWindowClass(const wchar_t *sClass);
+    void InitDefaultWindow(const wchar_t *sTitle, int width, int height);
+
+    std::wstring GetTextFromEditW(HWND hwnd);
+    std::string GetTextFromEditA(HWND hwnd);
 
     HWND AddLabel(int x, int y, int w, int h, const wchar_t *caption);
     HWND AddEdit(int x, int y, int w, int h, const wchar_t *caption);
